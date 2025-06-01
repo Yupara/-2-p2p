@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обменник GREEN CASH</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .exchange-container {
+            background-color: #0a2e0a;
+            color: #e0f0e0;
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .exchange-header {
+            color: #4caf50;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .exchange-details {
+            background-color: #1a3b1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .exchange-code {
+            background-color: #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .exchange-footer {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a5a2a;
+            color: white;
+        }
+        button {
+            background-color: #4caf50;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <div class="exchange-container">
+        <div class="exchange-header">🌿 ОБМЕННИК GREEN CASH 🌿</div>
+        
+        <div class="exchange-details">
+            <label for="currency-from">Отдаете:</label>
+            <select id="currency-from">
+                <option value="RUB">RUB (Рубли)</option>
+                <option value="USDT">USDT (Tether)</option>
+                <option value="BTC">BTC (Bitcoin)</option>
+            </select>
+            
+            <label for="amount">Сумма:</label>
+            <input type="number" id="amount" placeholder="1000">
+            
+            <label for="currency-to">Получаете:</label>
+            <select id="currency-to">
+                <option value="USDT">USDT (Tether)</option>
+                <option value="BTC">BTC (Bitcoin)</option>
+                <option value="RUB">RUB (Рубли)</option>
+            </select>
+            
+            <p><strong>Курс:</strong> <span id="rate">1 USDT = 90.5 RUB</span></p>
+            <p><strong>Резерв:</strong> <span id="reserve">10,000 USDT</span></p>
+        </div>
+        
+        <div class="exchange-code">
+            <p><strong>🔐 Ваш код для обмена:</strong></p>
+            <p id="generated-code" style="font-weight: bold; font-size: 18px;">XXXX-YYYY-ZZZZ</p>
+            <button onclick="generateCode()">Сгенерировать код</button>
+        </div>
+        
+        <div class="exchange-footer">
+            ⚠️ Обмен происходит после проверки платежа в течение 5 минут.
+        </div>
+    </div>
+
+    <script>
+        // Базовая логика для примера
+        function generateCode() {
+            const chars = 'ABCDEF0123456789';
+            let code = '';
+            for (let i = 0; i < 12; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+                if (i === 3 || i === 7) code += '-';
+            }
+            document.getElementById('generated-code').textContent = code;
+        }
+
+        // Можно добавить реальный расчет курса через API
+        document.getElementById('currency-from').addEventListener('change', updateRate);
+        document.getElementById('currency-to').addEventListener('change', updateRate);
+
+        function updateRate() {
+            const from = document.getElementById('currency-from').value;
+            const to = document.getElementById('currency-to').value;
+            // Здесь можно подключить API курсов
+            document.getElementById('rate').textContent = `1 ${to} = ${(Math.random() * 10 + 80).toFixed(2)} ${from}`;
+        }
+    </script>
+</body>
+</html>
