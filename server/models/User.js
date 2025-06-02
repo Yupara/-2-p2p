@@ -1,15 +1,11 @@
 const mongoose = require('mongoose');
 
-const OfferSchema = new mongoose.Schema({
-  sellCurrency: String,
-  sellAmount: Number,
-  buyCurrency: String,
-  paymentMethod: String,
-  contact: String,
+const UserSchema = new mongoose.Schema({
   userId: String,
-  status: { type: String, default: 'active' }, // active, disputed, completed
-  commissionPaid: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  email: String,
+  password: String,
+  tradesCompleted: { type: Number, default: 0 },
+  usdtWallet: String // Для получения комиссий
 });
 
-module.exports = mongoose.model('Offer', OfferSchema);
+module.exports = mongoose.model('User', UserSchema);
