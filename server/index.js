@@ -17,8 +17,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/p2p-exchange', 
   useUnifiedTopology: true
 });
 
-const bot = new TelegramBot('YOUR_TELEGRAM_BOT_TOKEN', { polling: true });
-const ADMIN_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN || 'YOUR_TELEGRAM_BOT_TOKEN', { polling: true });
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || 'YOUR_TELEGRAM_CHAT_ID';
 
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -31,22 +31,6 @@ const authenticate = (req, res, next) => {
     res.status(401).json({ error: 'Invalid token' });
   }
 };
-
-app.post('/api/register', async (req, res) => {
-  const { email, password, usdtWallet } = req.body;
-  const user = new User({ userId: email, email, password, usdtWallet });
-  await user.save();
-  const token = jwt.sign({ userId: email }, 'secret', { expiresIn: '1h' });
-  res.json({ token });
-});
-
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email, password });
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-  const token = jwt.sign({ userId: email }, 'secret', { expiresIn: '1h' });
-  res.json({ token });
-});
 
 app.get('/api/offers', async (req, res) => {
   const { currency, payment, amount } = req.query;
@@ -105,7 +89,7 @@ app.post('/api/complete-trade', authenticate, async (req, res) => {
   await user.save();
 
   const commissionRate = user.tradesCompleted >= 50 ? 0.0025 : 0.005;
-  let commission = amount * commissionRate * 2; // Покупатель + продавец
+  let commission = amount * commissionRate * 2;
 
   if (currency !== 'USDT') {
     const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd');
@@ -119,6 +103,22 @@ app.post('/api/complete-trade', authenticate, async (req, res) => {
   await offer.save();
 
   res.json({ commission, usdtWallet: user.usdtWallet });
+});
+
+app.post('/api/register', async (req, res) => {
+  const { email, password, usdtWallet } = req.body;
+  const user = new User({ userId: email, email, password, usdtWallet });
+  await user.save();
+  const token = jwt.sign({ userId: email }, 'secret', { expiresIn: '1h' });
+  res.json({ token });
+});
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email, password });
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+  const token = jwt.sign({ userId: email }, 'secret', { expiresIn: '1h' });
+  res.json({ token });
 });
 
 app.listen(process.env.PORT || 5000, () => console.log('Server running'));
