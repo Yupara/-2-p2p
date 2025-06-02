@@ -1,12 +1,5 @@
 [phases.setup]
-nixPkgs = ['nodejs', 'yarn']
-
-[[services]]
-name = "frontend"
-source = "client/"
-build = "npm install && npm run build"
-start = "npx serve -s build"
-targetPort = 3000
+nixPkgs = ['nodejs-18_x', 'yarn']
 
 [[services]]
 name = "backend"
@@ -14,3 +7,10 @@ source = "server/"
 build = "npm install"
 start = "npm start"
 targetPort = 5000
+
+[[services]]
+name = "frontend"
+source = "client/"
+build = "npm install && npm run build"
+start = "npx serve -s build"
+targetPort = 3000
